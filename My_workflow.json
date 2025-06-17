@@ -1,0 +1,203 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formId": "Iu9KVWP9"
+      },
+      "type": "n8n-nodes-base.typeformTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -200,
+        120
+      ],
+      "id": "3b89da4a-d9c8-4153-afc7-239b3e168a2d",
+      "name": "Typeform Trigger",
+      "webhookId": "527e94c4-1442-4a6b-8bfa-3987e16d8618",
+      "credentials": {
+        "typeformApi": {
+          "id": "cd9YgARukYQu3CwK",
+          "name": "Typeform account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "options": {}
+      },
+      "name": "OpenAI Prompt",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        80,
+        120
+      ],
+      "id": "df37645d-f9dc-4fd5-a6e6-cf6a97fc36ed",
+      "typeVersion": 4.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "pBKJyTA4gWBflfAm",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Split and structure OpenAI output\nreturn items;"
+      },
+      "name": "Extract Data",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        280,
+        120
+      ],
+      "id": "a55b24ff-2037-4d3a-8815-c56da8b7275d",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search.json",
+        "options": {}
+      },
+      "name": "Google Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        480,
+        -100
+      ],
+      "id": "77ce884d-4ceb-46c5-8c29-3454382b90fd",
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "options": {}
+      },
+      "name": "YouTube API",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        480,
+        300
+      ],
+      "id": "3b172739-ef08-4685-8578-7603a067502b",
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "functionCode": "// Combine OpenAI, YouTube, Google search results\nreturn items;"
+      },
+      "name": "Merge Data",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        680,
+        120
+      ],
+      "id": "3da32057-be5b-4f4f-a93b-6c329e8ae8af",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/pages",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "name": "Send to Notion",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        880,
+        120
+      ],
+      "id": "fc8ce05a-0f0c-4f54-9334-20ea39bd1022",
+      "typeVersion": 4.2
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Typeform Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Prompt": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Data": {
+      "main": [
+        [
+          {
+            "node": "Google Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "YouTube API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YouTube API": {
+      "main": [
+        [
+          {
+            "node": "Merge Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Search": {
+      "main": [
+        [
+          {
+            "node": "Merge Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Data": {
+      "main": [
+        [
+          {
+            "node": "Send to Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2c8bdc72-f66f-4742-a970-3e9e615835b2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9d574417a1fd5d563d9e4c0025fef87f9fcaed33deb54f408472f8741e151015"
+  },
+  "id": "iLFYKiw1HC87OiYg",
+  "tags": []
+}
